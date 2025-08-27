@@ -1,0 +1,19 @@
+# Future files
+src/benches
+src/examples
+src/fuzz
+src/testdata
+src/tests
+src/compression.rs
+src/lib.rs
+src/padding.rs
+src/schedule.rs
+
+# Target output folder
+target
+
+# Structured guide
+structure.md
+
+# Thinking
+scratch.rs
