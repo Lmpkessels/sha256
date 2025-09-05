@@ -1,49 +1,52 @@
-// Get length of the MSG (l).
-fn l(msg: &str) -> usize {
-    let mut total_bits = 0;
+/// Pads the given message with 0x80 and zeroes until its length is congruent to 56 mod 64.
+/// This prepares the message for appending the 64-bit length field in the next step.
+fn count_length(msg: &str) -> Vec<u8> {
+    // Compute byte length of message.
+    let bytes: &[u8] = msg.as_bytes();
 
-    for c in msg.chars() {
-        let byte_length = c.len_utf8();
-        // Multiply bit length by 8 bits.
-        // Here i could've asked how many bits does a byte have since that's
-        // the default value of all words etc, a word of 32 bits is an
-        // array of 4 * a byte.
-        let bit_length = byte_length * 8;
-        total_bits += bit_length;
+    // Compute original length in bits.
+    //
+    // Multiply the original length times 8 to work with 8-bit range (byte).
+    let l_bits: u64 = (bytes.len() as u64) * 8;
+
+    // Start mutable buffer.
+    // Move bytes into vec so it can grow exponentially (heap allocated).
+    let mut v: Vec<u8> = bytes.to_vec();
+
+    // Append; end of message bit.
+    //
+    // Note: If the message is 56 then total length is 57 since we append 1 (0x80), 
+    // so the original message can be 55 characters. 
+    // Else an entire new block is created filled with 0s and the msg length.
+    v.push(0x80);
+
+    // Loop for as long as the message doesn't contain 56 bytes.
+    // While looping till 56 bytes, append 0s (k).
+    // 
+    // If msg > 56 (including + 0x80) new block is created.
+    while v.len() % 64 != 56 {
+        v.push(0x00);
     }
 
-    total_bits
-}   
+    v
+}
 
-// Append 0s to message (k).
-fn append_0s(msg: usize) -> usize {
-    let mut result = 0;
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    // Now were working with the integer 512 which is 10000_00000, that's not
-    // 512 bits, 512 bits i 1 << 512;
-    if msg < 448 {
-        result = 448 - (msg + 1);
+    #[test]
+    fn computes_msg_length_appends_0x80_and_k_till_56_bytes_in_length() {
+        let msg = "AAAAAAAAAA_AAAAAAAAAA_AAAAAAAAAA_AAAAAAAAAA_AAAAA";
+        let result = count_length(msg);
+        let expected = [
+            65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 95,
+            65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 95, 
+            65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 95, 
+            65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 95, 
+            65, 65, 65, 65, 65, 128, 0, 0, 0, 0, 0, 0
+        ];
+        
+        assert_eq!((result), (expected));
     }
-
-    //TODO: Handle > 512.
-
-    result
-}
-
-// Pad it all together (l + 1 + k + m-bit).
-fn padding(msg: &str) -> usize {
-    let length = l(msg);
-
-    // Padding (l + 1 + k + m-bit).
-    // Since this isn't working at the bit level yet append default
-    // word width of the message.
-    length + 1 + append_0s(length) + 64
-}
-
-fn main() {
-    let test = l("abc");
-    println!("{test:?}");
-
-    let test0 = padding("Hello, reader of this file.");
-    println!("{test0:?}");
 }
