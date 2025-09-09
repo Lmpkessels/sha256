@@ -1,3 +1,6 @@
+# Archived code
+archive
+
 # Future files
 src/benches
 src/examples
@@ -5,9 +8,9 @@ src/fuzz
 src/testdata
 src/tests
 src/compression.rs
-src/lib.rs
-src/padding.rs
 src/schedule.rs
+src/constants.rs
+src/main.rs
 
 # Target output folder
 target
@@ -17,3 +20,11 @@ structure.md
 
 # Thinking
 scratch.rs
+todo.md
+
+# Cheatsheet
+github.md
+
+# Lessons from
+NIST.FIPS.180-4.pdf
+wikipedia_sha2.pdf
