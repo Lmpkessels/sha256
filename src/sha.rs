@@ -3,6 +3,28 @@ use crate::padding::padd;
 use crate::schedule::sched;
 use crate::compression::compress;
 
+/// SHA-256: Pads, parses, schedules, and compresses a message into a 256-bit 
+/// digest.
+///
+/// # Argument:
+/// `msg` Input message as a string slice.
+///
+/// # Description:
+/// - Padding: Appends a single '1' bit, followed by `k` zero bits so that
+///   the total length ≡ 448 (mod 512). Finally appends the original message
+///   length as a 64-bit big-endian integer.
+/// - Parsing: Splits the padded message into 512-bit blocks, each containing
+///   sixteen 32-bit words.
+/// - Scheduling: Expands each 512-bit block into a 64-word message schedule
+///   using the SHA-256 Small_sigma0 and Small_sigma1 functions.
+/// - Compression: Step-by-step updates the hash state across all blocks
+///   to compute the final digest.
+///
+/// # Return
+/// A 64-character lowercase hexadecimal string representing the 256-bit hash.
+///
+/// # Notes
+/// SHA-256 supports input messages up to `2^64 − 1` bits (≈ 2.3 exabytes).
 fn sha256(msg: &str) -> String {
     let padding = padd(msg);
     let parsing = pars(padding);

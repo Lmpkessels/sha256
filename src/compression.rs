@@ -1,5 +1,19 @@
 use crate::utils::{z, big_sigma1, big_sigma0, ch, maj};
 
+/// SHA256 compression function for message digestion.
+///
+/// # Argument
+/// Takes prepared message schedule as Vec<[u32; 64]>. 
+/// Then takes each scheduled block and compression starts.
+///
+/// # Description
+/// - Initialize (a, b, c, d, e, f, g, h), with the eight working variables; 
+///   (h0, h1, h2, h3, h4, h5, h6, h7), with the (m) hash value.
+/// - Implement all round operations (Ch, Maj, Big_sigma1, Big_sigma_0).
+/// - Compute the i-th intermediate hash value H(i)
+///
+/// # Returns
+/// Final 8-word digest as [u32; 8].
 pub fn compress(schedule: Vec<[u32; 64]>) -> [u32; 8] {
     let mut digest = [0u32; 8];
     // Hash values.
@@ -33,7 +47,7 @@ pub fn compress(schedule: Vec<[u32; 64]>) -> [u32; 8] {
     ];
 
     for m in schedule {
-        
+        // Initialize working variables.
         let mut a = h0;
         let mut b = h1;
         let mut c = h2;
@@ -43,6 +57,7 @@ pub fn compress(schedule: Vec<[u32; 64]>) -> [u32; 8] {
         let mut g = h6;
         let mut h = h7;
         
+        // Implement round operations.
         for i in 0..64 {
             let t1 = z(z(z(z(h, big_sigma1(e)), ch(e, f, g)), K[i]), m[i]);
             let t2 = z(big_sigma0(a), maj(a, b, c));
@@ -56,6 +71,7 @@ pub fn compress(schedule: Vec<[u32; 64]>) -> [u32; 8] {
             a = z(t1, t2);
         }
         
+        // Compute the i-th intermediate hash value H(i)
         h0 = z(h0, a);
         h1 = z(h1, b);
         h2 = z(h2, c);
@@ -65,8 +81,8 @@ pub fn compress(schedule: Vec<[u32; 64]>) -> [u32; 8] {
         h6 = z(h6, g);
         h7 = z(h7, h);
         
+        // Digested state.
         let d = [h0, h1, h2, h3, h4, h5, h6, h7];
-        
         digest = d;
     }
     digest
@@ -132,7 +148,7 @@ mod test {
         let msg = "a".repeat(1_000_000);
         let padding = padd(&msg);
         let parsing = pars(padding);
-        let schedules = sched(parsing);
+        let schedules = sched(parsing.clone());
         let result = compress(schedules);
         
         let expected = [
