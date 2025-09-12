@@ -7,9 +7,6 @@ src/examples
 src/fuzz
 src/testdata
 src/tests
-src/compression.rs
-src/schedule.rs
-src/constants.rs
 src/main.rs
 
 # Target output folder
@@ -21,6 +18,7 @@ structure.md
 # Thinking
 scratch.rs
 todo.md
+scratch
 
 # Cheatsheet
 github.md
