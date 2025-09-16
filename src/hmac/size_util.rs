@@ -18,10 +18,12 @@ pub fn get_right_block_size(k: &[u8]) -> Vec<u8> {
     let mut key_length = k0.len();
     let block_size = 64;
     
+    // k = k0 if key length == block_size.
     if key_length == block_size {
         return k0;
     };
     
+    // Hash k0 and append 0s if key_length > block_size.
     if key_length > block_size {
         k0 = sha256(&k0).to_vec();
         let mut k_l = k0.len();
@@ -31,6 +33,7 @@ pub fn get_right_block_size(k: &[u8]) -> Vec<u8> {
         };
     };
 
+    // Append all 0s if key_length < block_size.
     if key_length < block_size {
         let mut k_l = k.len();
         while k_l < block_size {
