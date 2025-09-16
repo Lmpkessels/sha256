@@ -1,19 +1,12 @@
 # Archived code
 archive
 
-# Future files
-src/benches
-src/examples
-src/fuzz
-src/testdata
-src/tests
-src/main.rs
-
 # Target output folder
 target
 
 # Structured guide
 structure.md
+plan.md
 
 # Thinking
 scratch.rs
@@ -26,3 +19,4 @@ github.md
 # Lessons from
 NIST.FIPS.180-4.pdf
 wikipedia_sha2.pdf
+nist.fips.198-1.pdf
