@@ -1,11 +1,30 @@
 use crate::sha256::sha256;
 use crate::hmac::get_right_block_size;
 
+/// HMAC (Hash-based Message Authentication Code) using SHA-256.
+/// 
+/// # Arguments
+/// - `k`: Key as a byte slice (`&[u8]`).  
+/// - `m`: Message as a byte slice (`&[u8]`).  
+///
+/// # Description
+/// - The key is XORed with the inner pad (ipad) and the outer pad (opad).  
+/// - The message is appended to the ipad and hashed to produce the inner hash.  
+/// - That inner hash is then appended to the opad and hashed again, producing 
+///   the final tag.  
+///
+/// # Returns
+/// A 32-byte array containing the authentication tag (MAC).
+///
+/// # References
+/// - [RFC 2104](https://www.rfc-editor.org/rfc/rfc2104)  
+/// - [RFC 4231](https://www.rfc-editor.org/rfc/rfc4231)
 pub fn hmac(k: &[u8], m: &[u8]) -> [u8; 32] {
     let mut result: Vec<u8> = Vec::new();
     let mut ipad: Vec<u8> = vec![0x36u8; 64];
     let mut opad: Vec<u8> = vec![0x5cu8; 64];
 
+    // Vector ipad[i] and opad[i] XORed with k[i].
     for i in 0..64 {
         ipad[i] ^= k[i];
         opad[i] ^= k[i];
@@ -14,17 +33,22 @@ pub fn hmac(k: &[u8], m: &[u8]) -> [u8; 32] {
     let msg: Vec<u8> = m.to_vec();
     let msg_len = m.len();
 
+    // ((K0 ^ ipad) || text)).
     let mut j = 0;
     while j < msg_len {
         ipad.push(msg[j]);
         j += 1;
     };
 
+    // H((K0 ^ ipad) || text)).
     let sha = sha256(&ipad);
+
+    // ((K0 ^ opad )|| H((K0 ^ ipad) || text))
     for k in 0..32 {
         opad.push(sha[k]);
     };
     
+    // h((K0 ^ opad )|| H((K0 ^ ipad) || text)).
     sha256(&opad)
 }
 

@@ -1,5 +1,18 @@
 use crate::sha256::sha256;
 
+/// Normalize a key to the correct block size (64 bytes for SHA-256).
+///
+/// # Arguments
+/// - `k`: Key as a byte slice (`&[u8]`).
+///
+/// # Description
+/// - If the key length is equal to the block size, it is returned unchanged.  
+/// - If the key is longer, it is first hashed with SHA-256 and then padded 
+///   with zeros.  
+/// - If the key is shorter, zeros are appended until the block size is reached.  
+///
+/// # Returns
+/// A vector of bytes (`Vec<u8>`) representing the normalized key (`K0`).
 pub fn get_right_block_size(k: &[u8]) -> Vec<u8> {
     let mut k0: Vec<u8> = k.to_vec();
     let mut key_length = k0.len();
