@@ -1,18 +1,17 @@
-/// Parsing bytes.
+/// Parse a padded message into 512-bit blocks of 16 × 32-bit words.
 ///
-/// Vector with stored bytes, which are split up into 32-bit
-/// words, then stored into a block [32; 16].
-/// 
-/// Create four bytes, increment after each loop the byte by one.
-/// Shift left backward so that MSB of byte is stored at MSB of word.
+/// # Description
+/// - Groups every 4 bytes into one 32-bit word (big-endian).
+/// - Collects 16 words into a 512-bit block.
+/// - Expands into multiple blocks if the message length exceeds 512 bits.
 ///
-/// Parse entire message into a block of 16; 32-bit words.
-/// Expand into next block if > 16, 32-bit words.
+/// # Returns
+/// A `Vec<[u32; 16]>`, where each element is one 512-bit block.
 pub fn pars(bytes: Vec<u8>) -> Vec<[u32; 16]> {
     
     let mut words: Vec<u32> = Vec::new();
     let mut j = 0;
-    // Loop as long as the message is in bytes.
+    // Convert every 4 bytes into a 32-bit big-endian word.
     while j < bytes.len() {
         let b0 = bytes[j] as u32;
         let b1 = bytes[j + 1] as u32;
@@ -29,7 +28,7 @@ pub fn pars(bytes: Vec<u8>) -> Vec<[u32; 16]> {
 
     let mut blocks: Vec<[u32; 16]> = Vec::new();
     let mut k = 0;
-    // Loop as long as the message is in words.
+    // Group words into 16-word (512-bit) blocks.
     while k < words.len() {
         let mut block = [0u32; 16];
         let mut l = 0;

@@ -1,13 +1,16 @@
-/// Padding message.
+/// Pad a message to a 512-bit block (SHA-256 padding).
 ///
-/// Argument is message. Message gets formatted into bytes, which then are
-/// stored in a vector.
+/// # Arguments
+/// - `msg`: Message as a byte slice (`&[u8]`).  
 ///
-/// Append 1 (signature end of message).
-/// Append 0 (fill block).
-/// Append message length (big endian order).
+/// # Description
+/// Appends padding according to the SHA-256 specification:  
+/// - Append a single `1` bit (0x80).  
+/// - Append `0` bits until the length is congruent to 56 (mod 64).  
+/// - Append the original message length as a 64-bit big-endian integer.  
 ///
-/// Find k such that (l + 1 + k) % 64 == 56, then append 8 bytes of length.
+/// # Returns
+/// A `Vec<u8>` containing the padded message in bytes.
 pub fn padd(msg: &[u8]) -> Vec<u8> {
     let mut bytes: Vec<u8> = msg.to_vec();
 
