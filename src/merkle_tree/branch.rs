@@ -2,18 +2,18 @@ use crate::sha256::sha256;
 
 // Create branch (take loaded leafts - left/right, push them into vec
 // with capacity 64, hash the vec, return the hashed state).
-pub fn branching(left: [u8; 32], right: [u8; 32]) -> [u8; 32] {
-    let mut appended_left_right = Vec::with_capacity(64);
+pub fn branching(left_node: [u8; 32], right_node: [u8; 32]) -> [u8; 32] {
+    let mut combined = Vec::with_capacity(64);
 
-    for i in 0..left.len() {
-        appended_left_right.push(left[i]);
+    for i in 0..left_node.len() {
+        combined.push(left_node[i]);
     }
 
-    for j in 0..left.len() {
-        appended_left_right.push(right[j]);
+    for j in 0..right_node.len() {
+        combined.push(right_node[j]);
     }
 
-    sha256(&appended_left_right)
+    sha256(&combined)
 }
 
 #[cfg(test)]

@@ -3,22 +3,22 @@ use crate::sha256::sha256;
 // Create leaf loading (Check to the remainder, increment if odd, and push, 
 // then return vector with hashed keys).
 pub fn leaf_loading(leaf: &[[u8; 32]]) -> Vec<[u8; 32]> {
-    let mut stored_data = leaf.to_vec();
+    let mut transactions = leaf.to_vec();
     
-    if stored_data.len() % 2 != 0 {
+    if transactions.len() % 2 != 0 {
         // Nest into stored data to get last index.
-        let last_index = stored_data[stored_data.len() - 1];
-        stored_data.push(last_index);
-    };
+        let last_index = transactions[transactions.len() - 1];
+        transactions.push(last_index);
+    }; 
 
-    let mut hashed_data_stored: Vec<[u8; 32]> = Vec::new();
-    for i in &stored_data {
+    let mut leaf_nodes: Vec<[u8; 32]> = Vec::new();
+    for i in &transactions {
         // Hash and store data.
-        let hashed_data = sha256(i);    
-        hashed_data_stored.push(hashed_data);
+        let hashed_transaction = sha256(i);    
+        leaf_nodes.push(hashed_transaction);
     }
 
-    hashed_data_stored
+    leaf_nodes
 }
 
 #[cfg(test)]

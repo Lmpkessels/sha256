@@ -3,27 +3,28 @@ use crate::merkle_tree::{leaf_loading, branching};
 // Create merkle-tree (leaf-loading, compression, resulted key from appended
 // keys).
 fn merkle_tree(leaf: Vec<[u8; 32]>) -> [u8; 32] {
-    let mut stored_data = leaf_loading(&leaf);
+    let mut leaf_nodes = leaf_loading(&leaf);
 
-    while stored_data.len() > 1 {
-        let mut root: Vec<[u8; 32]> = Vec::new();
-        if stored_data.len() % 2 != 0 {
-            let last_index = stored_data[stored_data.len() - 1];
-            stored_data.push(last_index);
+    while leaf_nodes.len() > 1 {
+        let mut non_leaf_nodes: Vec<[u8; 32]> = Vec::new();
+        if leaf_nodes.len() % 2 != 0 {
+            let last_index = leaf_nodes[leaf_nodes.len() - 1];
+            leaf_nodes.push(last_index);
         };
 
         let mut i = 0;
-        while i < stored_data.len() {
-            let parent = branching(stored_data[i], stored_data[i + 1]);
-            root.push(parent);
+        while i < leaf_nodes.len() {
+            let parent_node = branching(leaf_nodes[i], leaf_nodes[i + 1]);
+            non_leaf_nodes.push(parent_node);
             // Get index per 2 (0-1, 2-4, 5-6, etc).
             i = i + 2;
         }
 
-        stored_data = root;
+        leaf_nodes = non_leaf_nodes;
     }
 
-    stored_data[0]
+    let merkle_root = leaf_nodes[0];
+    merkle_root
 }
 
 #[cfg(test)]
