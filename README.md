@@ -28,29 +28,35 @@ cargo test
 
 - ✅ SHA-256 (complete)
 - ✅ HMAC (complete)
-- 🚧 Merkle Trees (in progress)
+- ✅ Merkle Trees (complete)
+- 🔄 UTXO (in progress)
 
 ## File Structure
 
 ```text
 src/
 ├── hmac/
-│   ├── hmac.rs       # HMAC implementation
-│   ├── mod.rs        # Module declaration
-│   └── size_util.rs  # Key normalization for HMAC
+│ ├── hmac.rs        # HMAC implementation
+│ ├── mod.rs         # Module declaration
+│ └── size_util.rs   # Key normalization for HMAC
+│
+├── merkle_tree/
+│ ├── branch.rs      # Combine left/right child nodes into parent
+│ ├── loading.rs     # Hash leaves and handle odd counts
+│ ├── merkle.rs      # Full Merkle tree construction
+│ └── mod.rs         # Module declaration
 │
 ├── sha256/
-│   ├── compression.rs  # Compression function
-│   ├── mod.rs          # Module declaration
-│   ├── padding.rs      # Message padding
-│   ├── parsing.rs      # Parse message into blocks
-│   ├── schedule.rs     # Message schedule
-│   ├── sha.rs          # Main SHA-256 pipeline
-│   ├── to_bytes.rs     # Convert digest words to bytes
-│   └── utils.rs        # Bitwise utilities (add, shift, rotate)
+│ ├── compression.rs   # Compression function
+│ ├── mod.rs           # Module declaration
+│ ├── padding.rs       # Message padding
+│ ├── parsing.rs       # Parse message into blocks
+│ ├── schedule.rs      # Message schedule
+│ ├── sha.rs           # Main SHA-256 pipeline
+│ └── to_bytes.rs      # Convert digest words to bytes
 │
-├── lib.rs   # Library entry point
-└── main.rs  # Example binary entry point (optional)
+├── lib.rs     # Library entry point
+└── utils.rs   # Bitwise utilities (add, shift, rotate)
 ```
 
 **Note:** All files include unit tests to validate correctness.
