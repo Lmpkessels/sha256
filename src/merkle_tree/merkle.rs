@@ -1,13 +1,32 @@
 use crate::merkle_tree::{leaf_loading, branching};
 
-// Create merkle-tree (leaf-loading, compression, resulted key from appended
-// keys).
+/// Merkle tree: for efficiently verifying data.
+///
+/// # Arguments
+/// - `leaf` - A vector of 32-byte arrays, each representing a transaction.
+///
+/// # Description
+/// - Hash each transaction to create the leaf nodes.
+/// - If the number of leaf nodes is odd, duplicate the last node.
+/// - While more than one node remains:
+///   - Pair nodes by index (0-1, 2-3, 4-5, etc.).
+///   - Concatenate left (even index) and right (odd index).
+///   - Hash the combined pair to create the parent node.
+/// - Repeat until only one node remains, the -> Merkle root.
+///
+/// # Returns
+/// - `[u8; 32]` - the Merkle root of the tree.
+///
+/// # References
+/// - [Investopedia](https://www.investopedia.com/terms/m/merkle-tree.asp)  
+/// - [Bitcoin developer guide](https://developer.bitcoin.org/devguide/block_chain.html)
 fn merkle_tree(leaf: Vec<[u8; 32]>) -> [u8; 32] {
     let mut leaf_nodes = leaf_loading(&leaf);
 
     while leaf_nodes.len() > 1 {
         let mut non_leaf_nodes: Vec<[u8; 32]> = Vec::new();
         if leaf_nodes.len() % 2 != 0 {
+            // Increment if odd.
             let last_index = leaf_nodes[leaf_nodes.len() - 1];
             leaf_nodes.push(last_index);
         };

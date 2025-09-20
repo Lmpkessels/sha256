@@ -1,12 +1,21 @@
 use crate::sha256::sha256;
 
-// Create leaf loading (Check to the remainder, increment if odd, and push, 
-// then return vector with hashed keys).
+/// Merkle-tree leaf loading: to increment if needed, and hash transaction.
+///
+/// # Arguments
+/// - `leaf` - A vector of 32-byte arrays, each representing a transaction.
+///
+/// # Description
+/// - If the number of leaf nodes is odd, duplicate the last node.
+/// - Hash each transaction to create the leaf nodes.
+///
+/// # Returns
+/// Hashed version of leaf nodes (hashed transactions).
 pub fn leaf_loading(leaf: &[[u8; 32]]) -> Vec<[u8; 32]> {
     let mut transactions = leaf.to_vec();
     
     if transactions.len() % 2 != 0 {
-        // Nest into stored data to get last index.
+        // Duplicate the last element if odd.
         let last_index = transactions[transactions.len() - 1];
         transactions.push(last_index);
     }; 

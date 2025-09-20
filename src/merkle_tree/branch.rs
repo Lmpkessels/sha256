@@ -1,7 +1,18 @@
 use crate::sha256::sha256;
 
-// Create branch (take loaded leafts - left/right, push them into vec
-// with capacity 64, hash the vec, return the hashed state).
+/// Merkle-tree branching: combine left and right nodes into a parent node.
+///
+/// # Arguments
+/// - `left_node` - 32-byte array representing the left child.
+/// - `right_node` - 32-byte array representing the right child.
+///
+/// # Description
+/// - Append all bytes from the left node into a 64-byte vector.
+/// - Append all bytes from the right node into the same vector.
+/// - Hash the combined 64 bytes to create the parent node.
+///
+/// # Returns
+/// - `[u8; 32]` - the parent node hash.
 pub fn branching(left_node: [u8; 32], right_node: [u8; 32]) -> [u8; 32] {
     let mut combined = Vec::with_capacity(64);
 
